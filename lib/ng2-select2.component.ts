@@ -53,7 +53,7 @@ export class Select2Component implements AfterViewInit, OnChanges, OnDestroy, On
             const link: any = head.children[head.children.length - 1];
 
             if (!link.version) {
-              const newLink = this.renderer.createElement('style');
+                const newLink = this.renderer.createElement('style');
                 this.renderer.appendChild(head, this.renderer.createElement('style'));
                 this.renderer.setProperty(newLink, 'type', 'text/css');
                 this.renderer.setProperty(newLink, 'version', 'select2');
@@ -68,7 +68,21 @@ export class Select2Component implements AfterViewInit, OnChanges, OnDestroy, On
             return;
         }
 
-        if (changes['data'] && JSON.stringify(changes['data'].previousValue) !== JSON.stringify(changes['data'].currentValue)) {
+        if (changes['data'] && (
+            (!Array.isArray(changes['data'].previousValue) && Array.isArray(changes['data'].currentValue))
+            ||
+            (Array.isArray(changes['data'].previousValue) && !Array.isArray(changes['data'].currentValue))
+            ||
+            // (Array.isArray(changes['data'].previousValue) && Array.isArray(changes['data'].currentValue) && changes['data'].previousValue.length != changes['data'].currentValue.length)
+            // ||
+            (Array.isArray(changes['data'].previousValue) && Array.isArray(changes['data'].currentValue) && (
+                changes['data'].previousValue.length != changes['data'].currentValue.length
+                ||
+                !changes['data'].previousValue.every((element, index) => (element?.id || element) === (changes['data'].currentValue[index]?.id || changes['data'].currentValue[index]))
+            ))
+            // ||
+            // JSON.stringify(changes['data'].previousValue) !== JSON.stringify(changes['data'].currentValue)
+        )) {
             await this.initPlugin();
 
             if (typeof this.value !== 'undefined') {
