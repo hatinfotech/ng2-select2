@@ -85,6 +85,8 @@ export class Select2Component implements AfterViewInit, OnChanges, OnDestroy, On
         if (changes['value'] && changes['value'].previousValue !== changes['value'].currentValue) {
             const newValue: string = changes['value'].currentValue;
 
+            // Fix merge values instead of set values error: set null before set real values to fixed
+            this.setElementValue(null);
             this.setElementValue(newValue);
 
             this.valueChanged.emit({
